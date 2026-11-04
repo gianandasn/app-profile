@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Filament\Resources\QuestionResource;
 use App\Models\Question;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -56,7 +57,7 @@ class LatestQuestionsWidget extends BaseWidget
                     ->since(),
             ])
             ->actions([
-                Tables\Actions\Action::make('jawab')
+                Actions\Action::make('jawab')
                     ->label('Buka & Jawab')
                     ->icon('heroicon-m-chat-bubble-bottom-center-text')
                     ->url(fn (Question $record): string => QuestionResource::getUrl('edit', ['record' => $record])),

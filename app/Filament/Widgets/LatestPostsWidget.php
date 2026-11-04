@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Filament\Resources\PostResource;
 use App\Models\Post;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -54,7 +55,7 @@ class LatestPostsWidget extends BaseWidget
                     ->since(),
             ])
             ->actions([
-                Tables\Actions\Action::make('edit')
+                Actions\Action::make('edit')
                     ->label('Edit')
                     ->icon('heroicon-m-pencil-square')
                     ->url(fn (Post $record): string => PostResource::getUrl('edit', ['record' => $record])),

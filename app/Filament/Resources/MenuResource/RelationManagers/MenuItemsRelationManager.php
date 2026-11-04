@@ -8,6 +8,7 @@ use App\Models\Post;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -115,7 +116,7 @@ class MenuItemsRelationManager extends RelationManager
             ])
             ->defaultSort('sort_order', 'asc')
             ->headerActions([
-                Tables\Actions\CreateAction::make()
+                Actions\CreateAction::make()
                     ->mutateFormDataUsing(function (array $data): array {
                         if ($data['type'] === 'page') {
                             $data['linkable_type'] = Page::class;
@@ -130,7 +131,7 @@ class MenuItemsRelationManager extends RelationManager
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
+                Actions\EditAction::make()
                     ->mutateFormDataUsing(function (array $data): array {
                         if ($data['type'] === 'page') {
                             $data['linkable_type'] = Page::class;
@@ -143,11 +144,11 @@ class MenuItemsRelationManager extends RelationManager
                         }
                         return $data;
                     }),
-                Tables\Actions\DeleteAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

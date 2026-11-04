@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Schemas\Schema;
 use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Notification;
@@ -78,7 +79,7 @@ class QuestionAnswersRelationManager extends RelationManager
                     ->sortable(),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
+                Actions\CreateAction::make()
                     ->mutateFormDataUsing(function (array $data): array {
                         $data['user_id'] = auth()->id();
                         $data['answered_at'] = now();
@@ -108,7 +109,7 @@ class QuestionAnswersRelationManager extends RelationManager
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
+                Actions\EditAction::make()
                     ->after(function (QuestionAnswer $record) {
                         /** @var Question $question */
                         $question = $this->getOwnerRecord();
@@ -117,11 +118,11 @@ class QuestionAnswersRelationManager extends RelationManager
                             $question->update(['status' => 'answered']);
                         }
                     }),
-                Tables\Actions\DeleteAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
