@@ -5,10 +5,10 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\QuestionResource\Pages;
 use App\Filament\Resources\QuestionResource\RelationManagers\QuestionAnswersRelationManager;
 use App\Models\Question;
-use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Resources\Resource;
 use Filament\Actions;
+use Filament\Forms;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -18,61 +18,75 @@ class QuestionResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-question-mark-circle';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Pertanyaan Masyarakat';
+    public static function getModelLabel(): string
+    {
+        return __('Citizen Question');
+    }
 
-    protected static ?string $modelLabel = 'Pertanyaan Masyarakat';
+    public static function getPluralModelLabel(): string
+    {
+        return __('Citizen Questions');
+    }
 
-    protected static ?string $pluralModelLabel = 'Pertanyaan Masyarakat';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Citizen Questions');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Citizen Questions');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
                 Forms\Components\Select::make('topic_id')
-                    ->label('Topik Pertanyaan')
+                    ->label(__('Topic'))
                     ->relationship('topic', 'name')
                     ->searchable()
                     ->preload()
                     ->required(),
 
                 Forms\Components\Select::make('status')
-                    ->label('Status')
+                    ->label(__('Status'))
                     ->options([
-                        'pending' => 'Menunggu Tanggapan',
-                        'answered' => 'Sudah Dijawab',
-                        'rejected' => 'Ditolak',
+                        'pending' => __('Pending (Awaiting Response)'),
+                        'answered' => __('Answered'),
+                        'rejected' => __('Rejected'),
                     ])
                     ->default('pending')
                     ->required(),
 
                 Forms\Components\TextInput::make('name')
-                    ->label('Nama Pengirim')
+                    ->label(__('Sender Name'))
                     ->required()
                     ->maxLength(255),
 
                 Forms\Components\TextInput::make('email')
-                    ->label('Email Pengirim')
+                    ->label(__('Sender Email'))
                     ->email()
                     ->required()
                     ->maxLength(255),
 
                 Forms\Components\TextInput::make('phone')
-                    ->label('Nomor Telepon / WhatsApp')
+                    ->label(__('Phone / WhatsApp Number'))
                     ->tel()
                     ->maxLength(50),
 
                 Forms\Components\TextInput::make('ip_address')
-                    ->label('Alamat IP')
+                    ->label(__('IP Address'))
                     ->disabled(),
 
                 Forms\Components\TextInput::make('subject')
-                    ->label('Subjek / Judul Pertanyaan')
+                    ->label(__('Subject / Question Title'))
                     ->required()
                     ->maxLength(255)
                     ->columnSpanFull(),
 
                 Forms\Components\RichEditor::make('body')
-                    ->label('Isi Pertanyaan')
+                    ->label(__('Question Body'))
                     ->required()
                     ->columnSpanFull(),
             ]);
@@ -83,22 +97,22 @@ class QuestionResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Penanya')
+                    ->label(__('Sender'))
                     ->searchable()
                     ->sortable()
                     ->description(fn (Question $record): string => $record->email),
 
                 Tables\Columns\TextColumn::make('subject')
-                    ->label('Subjek')
+                    ->label(__('Subject'))
                     ->searchable()
                     ->limit(40),
 
                 Tables\Columns\TextColumn::make('topic.name')
-                    ->label('Topik')
+                    ->label(__('Topic'))
                     ->badge(),
 
                 Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
+                    ->label(__('Status'))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'pending' => 'warning',
@@ -107,29 +121,29 @@ class QuestionResource extends Resource
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'pending' => 'Menunggu',
-                        'answered' => 'Dijawab',
-                        'rejected' => 'Ditolak',
+                        'pending' => __('Pending'),
+                        'answered' => __('Answered'),
+                        'rejected' => __('Rejected'),
                         default => $state,
                     }),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Masuk')
+                    ->label(__('Date Received'))
                     ->since()
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('Status')
+                    ->label(__('Status'))
                     ->options([
-                        'pending' => 'Menunggu Tanggapan',
-                        'answered' => 'Sudah Dijawab',
-                        'rejected' => 'Ditolak',
+                        'pending' => __('Pending (Awaiting Response)'),
+                        'answered' => __('Answered'),
+                        'rejected' => __('Rejected'),
                     ]),
                 Tables\Filters\SelectFilter::make('topic')
                     ->relationship('topic', 'name')
-                    ->label('Topik'),
+                    ->label(__('Topic')),
             ])
             ->actions([
                 Actions\EditAction::make(),

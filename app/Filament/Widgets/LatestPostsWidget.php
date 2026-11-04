@@ -8,6 +8,7 @@ use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Contracts\Support\Htmlable;
 
 class LatestPostsWidget extends BaseWidget
 {
@@ -15,7 +16,10 @@ class LatestPostsWidget extends BaseWidget
 
     protected int | string | array $columnSpan = 'full';
 
-    protected static ?string $heading = 'Post & Berita Terbaru';
+    public function getTableHeading(): string | Htmlable | null
+    {
+        return __('Recent Posts & News');
+    }
 
     public function table(Table $table): Table
     {
@@ -25,20 +29,26 @@ class LatestPostsWidget extends BaseWidget
             )
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
-                    ->label('Thumbnail')
+                    ->label(__('Thumbnail'))
                     ->circular(),
 
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Judul Artikel')
+                    ->label(__('Title'))
                     ->limit(45),
 
                 Tables\Columns\TextColumn::make('category.name')
-                    ->label('Kategori')
+                    ->label(__('Category'))
                     ->badge(),
 
                 Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
+                    ->label(__('Status'))
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'draft' => __('Draft'),
+                        'published' => __('Published'),
+                        'archived' => __('Archived'),
+                        default => $state,
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'published' => 'success',
                         'draft' => 'gray',
@@ -47,20 +57,19 @@ class LatestPostsWidget extends BaseWidget
                     }),
 
                 Tables\Columns\TextColumn::make('view_count')
-                    ->label('Dilihat')
+                    ->label(__('Views'))
                     ->numeric(),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Dibuat')
+                    ->label(__('Created At'))
                     ->since(),
             ])
             ->actions([
                 Actions\Action::make('edit')
-                    ->label('Edit')
+                    ->label(__('Edit'))
                     ->icon('heroicon-m-pencil-square')
                     ->url(fn (Post $record): string => PostResource::getUrl('edit', ['record' => $record])),
             ])
             ->paginated(false);
     }
 }
-

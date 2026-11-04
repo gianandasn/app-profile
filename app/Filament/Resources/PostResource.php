@@ -4,10 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PostResource\Pages;
 use App\Models\Post;
-use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Resources\Resource;
 use Filament\Actions;
+use Filament\Forms;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -18,7 +18,25 @@ class PostResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'CMS';
+    public static function getModelLabel(): string
+    {
+        return __('Post');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Posts');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('CMS');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Posts');
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -27,20 +45,24 @@ class PostResource extends Resource
                 \Filament\Schemas\Components\Group::make()
                     ->schema([
                         Forms\Components\TextInput::make('title')
+                            ->label(__('Title'))
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn ($set, ?string $state) => $set('slug', Str::slug($state))),
 
                         Forms\Components\TextInput::make('slug')
+                            ->label(__('Slug'))
                             ->required()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
 
                         Forms\Components\Textarea::make('summary')
+                            ->label(__('Summary'))
                             ->rows(3),
 
                         Forms\Components\RichEditor::make('content')
+                            ->label(__('Content'))
                             ->required()
                             ->columnSpanFull()
                             ->toolbarButtons([
@@ -65,26 +87,30 @@ class PostResource extends Resource
                 \Filament\Schemas\Components\Group::make()
                     ->schema([
                         Forms\Components\Select::make('status')
+                            ->label(__('Status'))
                             ->options([
-                                'draft' => 'Draft',
-                                'published' => 'Published',
-                                'archived' => 'Archived',
+                                'draft' => __('Draft'),
+                                'published' => __('Published'),
+                                'archived' => __('Archived'),
                             ])
                             ->default('draft')
                             ->required(),
 
                         Forms\Components\Select::make('category_id')
+                            ->label(__('Category'))
                             ->relationship('category', 'name')
                             ->searchable()
                             ->preload()
                             ->required(),
 
-                        Forms\Components\DateTimePicker::make('published_at'),
+                        Forms\Components\DateTimePicker::make('published_at')
+                            ->label(__('Published At')),
 
                         Forms\Components\Toggle::make('is_featured')
-                            ->default(false),
+                            ->label(__('Featured')),
 
                         Forms\Components\FileUpload::make('image')
+                            ->label(__('Image'))
                             ->image()
                             ->directory('posts')
                             ->imageEditor(),
@@ -100,19 +126,28 @@ class PostResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
+                    ->label(__('Image'))
                     ->circular(),
 
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('Title'))
                     ->searchable()
                     ->sortable()
                     ->description(fn (Post $record): ?string => $record->summary ? Str::limit($record->summary, 50) : null),
 
                 Tables\Columns\TextColumn::make('category.name')
-                    ->label('Kategori')
+                    ->label(__('Category'))
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('status')
+                    ->label(__('Status'))
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'draft' => __('Draft'),
+                        'published' => __('Published'),
+                        'archived' => __('Archived'),
+                        default => $state,
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
                         'published' => 'success',
@@ -121,31 +156,37 @@ class PostResource extends Resource
                     }),
 
                 Tables\Columns\IconColumn::make('is_featured')
+                    ->label(__('Featured'))
                     ->boolean(),
 
                 Tables\Columns\TextColumn::make('view_count')
+                    ->label(__('Views'))
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('published_at')
+                    ->label(__('Published At'))
                     ->date()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('Penulis')
+                    ->label(__('Author'))
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
+                    ->label(__('Status'))
                     ->options([
-                        'draft' => 'Draft',
-                        'published' => 'Published',
-                        'archived' => 'Archived',
+                        'draft' => __('Draft'),
+                        'published' => __('Published'),
+                        'archived' => __('Archived'),
                     ]),
 
                 Tables\Filters\SelectFilter::make('category')
+                    ->label(__('Category'))
                     ->relationship('category', 'name'),
 
-                Tables\Filters\TernaryFilter::make('is_featured'),
+                Tables\Filters\TernaryFilter::make('is_featured')
+                    ->label(__('Featured')),
             ])
             ->actions([
                 Actions\EditAction::make(),

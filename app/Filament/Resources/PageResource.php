@@ -4,10 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PageResource\Pages;
 use App\Models\Page;
-use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Resources\Resource;
 use Filament\Actions;
+use Filament\Forms;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -18,44 +18,69 @@ class PageResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'CMS';
+    public static function getModelLabel(): string
+    {
+        return __('Page');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Pages');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('CMS');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Pages');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
                 Forms\Components\TextInput::make('title')
+                    ->label(__('Title'))
                     ->required()
                     ->maxLength(255)
                     ->live(onBlur: true)
                     ->afterStateUpdated(fn ($set, ?string $state) => $set('slug', Str::slug($state))),
 
                 Forms\Components\TextInput::make('slug')
+                    ->label(__('Slug'))
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
 
                 Forms\Components\RichEditor::make('content')
+                    ->label(__('Content'))
                     ->required()
                     ->columnSpanFull(),
 
                 Forms\Components\FileUpload::make('image')
+                    ->label(__('Image'))
                     ->image()
                     ->directory('pages'),
 
                 Forms\Components\Select::make('status')
+                    ->label(__('Status'))
                     ->options([
-                        'draft' => 'Draft',
-                        'published' => 'Published',
+                        'draft' => __('Draft'),
+                        'published' => __('Published'),
                     ])
                     ->default('draft')
                     ->required(),
 
                 Forms\Components\TextInput::make('sort_order')
+                    ->label(__('Sort Order'))
                     ->numeric()
                     ->default(0),
 
                 Forms\Components\Toggle::make('show_in_menu')
+                    ->label(__('Show in Menu'))
                     ->default(false),
             ]);
     }
@@ -65,13 +90,21 @@ class PageResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('Title'))
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('slug'),
+                Tables\Columns\TextColumn::make('slug')
+                    ->label(__('Slug')),
 
                 Tables\Columns\TextColumn::make('status')
+                    ->label(__('Status'))
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'draft' => __('Draft'),
+                        'published' => __('Published'),
+                        default => $state,
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
                         'published' => 'success',
@@ -79,9 +112,11 @@ class PageResource extends Resource
                     }),
 
                 Tables\Columns\IconColumn::make('show_in_menu')
+                    ->label(__('Show in Menu'))
                     ->boolean(),
 
                 Tables\Columns\TextColumn::make('sort_order')
+                    ->label(__('Sort Order'))
                     ->sortable(),
             ])
             ->filters([])

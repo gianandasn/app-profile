@@ -8,6 +8,7 @@ use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Contracts\Support\Htmlable;
 
 class LatestQuestionsWidget extends BaseWidget
 {
@@ -15,7 +16,10 @@ class LatestQuestionsWidget extends BaseWidget
 
     protected int | string | array $columnSpan = 'full';
 
-    protected static ?string $heading = 'Pertanyaan Terbaru dari Masyarakat';
+    public function getTableHeading(): string | Htmlable | null
+    {
+        return __('Recent Questions from Citizens');
+    }
 
     public function table(Table $table): Table
     {
@@ -25,19 +29,19 @@ class LatestQuestionsWidget extends BaseWidget
             )
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Nama Pengirim')
+                    ->label(__('Sender Name'))
                     ->description(fn (Question $record): string => $record->email),
 
                 Tables\Columns\TextColumn::make('subject')
-                    ->label('Subjek Pertanyaan')
+                    ->label(__('Subject'))
                     ->limit(45),
 
                 Tables\Columns\TextColumn::make('topic.name')
-                    ->label('Topik')
+                    ->label(__('Topic'))
                     ->badge(),
 
                 Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
+                    ->label(__('Status'))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'pending' => 'warning',
@@ -46,23 +50,22 @@ class LatestQuestionsWidget extends BaseWidget
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'pending' => 'Menunggu',
-                        'answered' => 'Dijawab',
-                        'rejected' => 'Ditolak',
+                        'pending' => __('Pending'),
+                        'answered' => __('Answered'),
+                        'rejected' => __('Rejected'),
                         default => $state,
                     }),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Waktu Masuk')
+                    ->label(__('Date Received'))
                     ->since(),
             ])
             ->actions([
                 Actions\Action::make('jawab')
-                    ->label('Buka & Jawab')
+                    ->label(__('Open & Answer'))
                     ->icon('heroicon-m-chat-bubble-bottom-center-text')
                     ->url(fn (Question $record): string => QuestionResource::getUrl('edit', ['record' => $record])),
             ])
             ->paginated(false);
     }
 }
-

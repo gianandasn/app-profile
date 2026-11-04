@@ -5,10 +5,10 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\MenuResource\Pages;
 use App\Filament\Resources\MenuResource\RelationManagers\MenuItemsRelationManager;
 use App\Models\Menu;
-use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Resources\Resource;
 use Filament\Actions;
+use Filament\Forms;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -18,33 +18,47 @@ class MenuResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-bars-3';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'CMS';
+    public static function getModelLabel(): string
+    {
+        return __('Navigation Menu');
+    }
 
-    protected static ?string $modelLabel = 'Menu Navigasi';
+    public static function getPluralModelLabel(): string
+    {
+        return __('Navigation Menus');
+    }
 
-    protected static ?string $pluralModelLabel = 'Menu Navigasi';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('CMS');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Navigation Menus');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Nama Menu')
+                    ->label(__('Name'))
                     ->required()
                     ->maxLength(255),
 
                 Forms\Components\Select::make('location')
-                    ->label('Lokasi Penempatan')
+                    ->label(__('Menu Location'))
                     ->options([
-                        'header' => 'Header (Navigasi Atas)',
-                        'footer' => 'Footer (Navigasi Bawah)',
-                        'sidebar' => 'Sidebar (Bilah Sisi)',
+                        'header' => __('Header (Top Navigation)'),
+                        'footer' => __('Footer (Bottom Navigation)'),
+                        'sidebar' => __('Sidebar (Side Navigation)'),
                     ])
                     ->default('header')
                     ->required(),
 
                 Forms\Components\Toggle::make('is_active')
-                    ->label('Aktif')
+                    ->label(__('Active'))
                     ->default(true),
             ]);
     }
@@ -54,13 +68,19 @@ class MenuResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Nama Menu')
+                    ->label(__('Name'))
                     ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('location')
-                    ->label('Lokasi')
+                    ->label(__('Menu Location'))
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'header' => __('Header (Top Navigation)'),
+                        'footer' => __('Footer (Bottom Navigation)'),
+                        'sidebar' => __('Sidebar (Side Navigation)'),
+                        default => $state,
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'header' => 'primary',
                         'footer' => 'info',
@@ -69,15 +89,15 @@ class MenuResource extends Resource
                     }),
 
                 Tables\Columns\TextColumn::make('items_count')
-                    ->label('Jumlah Item')
+                    ->label(__('Items Count'))
                     ->counts('items')
                     ->sortable(),
 
                 Tables\Columns\ToggleColumn::make('is_active')
-                    ->label('Aktif'),
+                    ->label(__('Active')),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Dibuat')
+                    ->label(__('Created At'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -16,24 +16,23 @@ class StatsOverviewWidget extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Artikel Terbit', Post::query()->published()->count())
-                ->description('Artikel publik yang sudah tayang')
+            Stat::make(__('Total Published Posts'), Post::query()->published()->count())
+                ->description(__('Live public articles'))
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color('success'),
 
-            Stat::make('Total Halaman', Page::query()->published()->count())
-                ->description('Halaman profil instansi aktif')
+            Stat::make(__('Total Pages'), Page::query()->published()->count())
+                ->description(__('Active institutional profile pages'))
                 ->color('info'),
 
-            Stat::make('Pertanyaan Menunggu', Question::query()->pending()->count())
-                ->description('Perlu respon dari petugas')
+            Stat::make(__('Pending Questions'), Question::query()->pending()->count())
+                ->description(__('Needs response from staff'))
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('warning'),
 
-            Stat::make('Total FAQ Aktif', Faq::query()->active()->count())
-                ->description('Informasi tanya jawab umum')
+            Stat::make(__('Total Active FAQs'), Faq::query()->active()->count())
+                ->description(__('General Q&A information'))
                 ->color('primary'),
         ];
     }
 }
-

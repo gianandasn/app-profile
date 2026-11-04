@@ -5,52 +5,56 @@ namespace App\Filament\Resources\MenuResource\RelationManagers;
 use App\Models\Category;
 use App\Models\Page;
 use App\Models\Post;
-use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Actions;
+use Filament\Forms;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class MenuItemsRelationManager extends RelationManager
 {
     protected static string $relationship = 'items';
 
-    protected static ?string $title = 'Item Menu';
-
     protected static ?string $recordTitleAttribute = 'label';
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __('Menu Items');
+    }
 
     public function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
                 Forms\Components\TextInput::make('label')
-                    ->label('Label')
+                    ->label(__('Label'))
                     ->required()
                     ->maxLength(255),
 
                 Forms\Components\Select::make('type')
-                    ->label('Tipe Menu')
+                    ->label(__('Menu Type'))
                     ->options([
-                        'custom' => 'Tautan Kustom (URL)',
-                        'page' => 'Halaman Statis',
-                        'post' => 'Artikel / Berita',
-                        'category' => 'Kategori Artikel',
+                        'custom' => __('Custom Link (URL)'),
+                        'page' => __('Static Page'),
+                        'post' => __('Article / News'),
+                        'category' => __('Article Category'),
                     ])
                     ->default('custom')
                     ->required()
                     ->live(),
 
                 Forms\Components\TextInput::make('url')
-                    ->label('URL')
+                    ->label(__('URL'))
                     ->placeholder('https://contoh.com atau /kontak')
                     ->visible(fn ($get) => $get('type') === 'custom')
                     ->required(fn ($get) => $get('type') === 'custom')
                     ->maxLength(255),
 
                 Forms\Components\Select::make('linkable_id')
-                    ->label('Pilih Konten')
-                    ->options(function (Get $get) {
+                    ->label(__('Select Content'))
+                    ->options(function ($get) {
                         return match ($get('type')) {
                             'page' => Page::query()->orderBy('title')->pluck('title', 'id'),
                             'post' => Post::query()->published()->orderBy('title')->pluck('title', 'id'),
@@ -64,18 +68,18 @@ class MenuItemsRelationManager extends RelationManager
                     ->live(),
 
                 Forms\Components\Select::make('parent_id')
-                    ->label('Menu Induk (Sub-menu dari)')
+                    ->label(__('Parent Menu (Sub-menu of)'))
                     ->relationship('parent', 'label', fn ($query) => $query->where('menu_id', $this->getOwnerRecord()->id))
                     ->searchable()
                     ->nullable(),
 
                 Forms\Components\TextInput::make('sort_order')
-                    ->label('Urutan')
+                    ->label(__('Sort Order'))
                     ->numeric()
                     ->default(0),
 
                 Forms\Components\Toggle::make('is_active')
-                    ->label('Aktif')
+                    ->label(__('Active'))
                     ->default(true),
             ]);
     }
@@ -85,13 +89,20 @@ class MenuItemsRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('label')
-                    ->label('Label')
+                    ->label(__('Label'))
                     ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('type')
-                    ->label('Tipe')
+                    ->label(__('Menu Type'))
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'page' => __('Static Page'),
+                        'post' => __('Article / News'),
+                        'category' => __('Article Category'),
+                        'custom' => __('Custom Link (URL)'),
+                        default => $state,
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'page' => 'info',
                         'post' => 'success',
@@ -100,19 +111,19 @@ class MenuItemsRelationManager extends RelationManager
                     }),
 
                 Tables\Columns\TextColumn::make('url')
-                    ->label('URL / Target')
+                    ->label(__('Target URL'))
                     ->limit(30),
 
                 Tables\Columns\TextColumn::make('parent.label')
-                    ->label('Induk')
+                    ->label(__('Parent'))
                     ->placeholder('-'),
 
                 Tables\Columns\TextColumn::make('sort_order')
-                    ->label('Urutan')
+                    ->label(__('Sort Order'))
                     ->sortable(),
 
                 Tables\Columns\ToggleColumn::make('is_active')
-                    ->label('Aktif'),
+                    ->label(__('Active')),
             ])
             ->defaultSort('sort_order', 'asc')
             ->headerActions([

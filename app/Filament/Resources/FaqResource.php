@@ -4,10 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\FaqResource\Pages;
 use App\Models\Faq;
-use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Resources\Resource;
 use Filament\Actions;
+use Filament\Forms;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -17,41 +17,55 @@ class FaqResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-light-bulb';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Pertanyaan Masyarakat';
+    public static function getModelLabel(): string
+    {
+        return __('FAQ');
+    }
 
-    protected static ?string $modelLabel = 'FAQ';
+    public static function getPluralModelLabel(): string
+    {
+        return __('Frequently Asked Questions (FAQ)');
+    }
 
-    protected static ?string $pluralModelLabel = 'Tanya Jawab (FAQ)';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Citizen Questions');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('FAQ');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
                 Forms\Components\Select::make('topic_id')
-                    ->label('Topik FAQ')
+                    ->label(__('FAQ Topic'))
                     ->relationship('topic', 'name')
                     ->searchable()
                     ->preload()
                     ->required(),
 
                 Forms\Components\TextInput::make('sort_order')
-                    ->label('Urutan')
+                    ->label(__('Sort Order'))
                     ->numeric()
                     ->default(0),
 
                 Forms\Components\TextInput::make('question')
-                    ->label('Pertanyaan FAQ')
+                    ->label(__('FAQ Question'))
                     ->required()
                     ->maxLength(255)
                     ->columnSpanFull(),
 
                 Forms\Components\RichEditor::make('answer')
-                    ->label('Jawaban')
+                    ->label(__('Answer'))
                     ->required()
                     ->columnSpanFull(),
 
                 Forms\Components\Toggle::make('is_active')
-                    ->label('Aktif Ditampilkan')
+                    ->label(__('Active'))
                     ->default(true),
             ]);
     }
@@ -61,27 +75,27 @@ class FaqResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('question')
-                    ->label('Pertanyaan')
+                    ->label(__('Question'))
                     ->searchable()
                     ->sortable()
                     ->limit(60),
 
                 Tables\Columns\TextColumn::make('topic.name')
-                    ->label('Topik')
+                    ->label(__('Topic'))
                     ->badge(),
 
                 Tables\Columns\TextColumn::make('sort_order')
-                    ->label('Urutan')
+                    ->label(__('Sort Order'))
                     ->sortable(),
 
                 Tables\Columns\ToggleColumn::make('is_active')
-                    ->label('Aktif'),
+                    ->label(__('Active')),
             ])
             ->defaultSort('sort_order', 'asc')
             ->filters([
                 Tables\Filters\SelectFilter::make('topic')
                     ->relationship('topic', 'name')
-                    ->label('Topik'),
+                    ->label(__('Topic')),
             ])
             ->actions([
                 Actions\EditAction::make(),

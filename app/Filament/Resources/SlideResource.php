@@ -4,10 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SlideResource\Pages;
 use App\Models\Slide;
-use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Resources\Resource;
 use Filament\Actions;
+use Filament\Forms;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -17,51 +17,65 @@ class SlideResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-presentation-chart-bar';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'CMS';
+    public static function getModelLabel(): string
+    {
+        return __('Slide Banner');
+    }
 
-    protected static ?string $modelLabel = 'Slide Banner';
+    public static function getPluralModelLabel(): string
+    {
+        return __('Slide Banners');
+    }
 
-    protected static ?string $pluralModelLabel = 'Slide Banner';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('CMS');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Slide Banners');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
                 Forms\Components\TextInput::make('title')
-                    ->label('Judul Slide')
+                    ->label(__('Slide Title'))
                     ->required()
                     ->maxLength(255),
 
                 Forms\Components\TextInput::make('link_url')
-                    ->label('Tautan Target (URL)')
+                    ->label(__('Target URL'))
                     ->url()
                     ->maxLength(255),
 
                 Forms\Components\FileUpload::make('image')
-                    ->label('Gambar Slide')
+                    ->label(__('Image'))
                     ->image()
                     ->directory('slides')
                     ->required()
                     ->columnSpanFull(),
 
                 Forms\Components\Textarea::make('description')
-                    ->label('Deskripsi / Keterangan Singkat')
+                    ->label(__('Description'))
                     ->rows(3)
                     ->columnSpanFull(),
 
                 Forms\Components\DatePicker::make('start_date')
-                    ->label('Tanggal Mulai Tayang'),
+                    ->label(__('Start Date')),
 
                 Forms\Components\DatePicker::make('end_date')
-                    ->label('Tanggal Berakhir Tayang'),
+                    ->label(__('End Date')),
 
                 Forms\Components\TextInput::make('sort_order')
-                    ->label('Urutan')
+                    ->label(__('Sort Order'))
                     ->numeric()
                     ->default(0),
 
                 Forms\Components\Toggle::make('is_active')
-                    ->label('Aktif')
+                    ->label(__('Active'))
                     ->default(true),
             ]);
     }
@@ -71,32 +85,32 @@ class SlideResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
-                    ->label('Gambar')
+                    ->label(__('Image'))
                     ->height(50),
 
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Judul')
+                    ->label(__('Title'))
                     ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('link_url')
-                    ->label('URL')
+                    ->label(__('Target URL'))
                     ->limit(25),
 
                 Tables\Columns\ToggleColumn::make('is_active')
-                    ->label('Aktif'),
+                    ->label(__('Active')),
 
                 Tables\Columns\TextColumn::make('sort_order')
-                    ->label('Urutan')
+                    ->label(__('Sort Order'))
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('start_date')
-                    ->label('Mulai')
+                    ->label(__('Start'))
                     ->date()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('end_date')
-                    ->label('Selesai')
+                    ->label(__('End'))
                     ->date()
                     ->sortable(),
             ])

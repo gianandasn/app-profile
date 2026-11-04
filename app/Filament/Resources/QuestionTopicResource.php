@@ -4,10 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\QuestionTopicResource\Pages;
 use App\Models\QuestionTopic;
-use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Resources\Resource;
 use Filament\Actions;
+use Filament\Forms;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -18,46 +18,60 @@ class QuestionTopicResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Pertanyaan Masyarakat';
+    public static function getModelLabel(): string
+    {
+        return __('Question Topic');
+    }
 
-    protected static ?string $modelLabel = 'Topik Pertanyaan';
+    public static function getPluralModelLabel(): string
+    {
+        return __('Question Topics');
+    }
 
-    protected static ?string $pluralModelLabel = 'Topik Pertanyaan';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Citizen Questions');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Question Topics');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Nama Topik')
+                    ->label(__('Name'))
                     ->required()
                     ->maxLength(255)
                     ->live(onBlur: true)
                     ->afterStateUpdated(fn ($set, ?string $state) => $set('slug', Str::slug($state))),
 
                 Forms\Components\TextInput::make('slug')
-                    ->label('Slug')
+                    ->label(__('Slug'))
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
 
                 Forms\Components\TextInput::make('icon')
-                    ->label('Ikon')
+                    ->label(__('Icon'))
                     ->placeholder('heroicon-o-information-circle')
                     ->maxLength(255),
 
                 Forms\Components\TextInput::make('sort_order')
-                    ->label('Urutan')
+                    ->label(__('Sort Order'))
                     ->numeric()
                     ->default(0),
 
                 Forms\Components\Textarea::make('description')
-                    ->label('Deskripsi')
+                    ->label(__('Description'))
                     ->rows(3)
                     ->columnSpanFull(),
 
                 Forms\Components\Toggle::make('is_active')
-                    ->label('Aktif')
+                    ->label(__('Active'))
                     ->default(true),
             ]);
     }
@@ -67,29 +81,29 @@ class QuestionTopicResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Nama Topik')
+                    ->label(__('Name'))
                     ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('slug')
-                    ->label('Slug'),
+                    ->label(__('Slug')),
 
                 Tables\Columns\TextColumn::make('questions_count')
-                    ->label('Jml Pertanyaan')
+                    ->label(__('Questions Count'))
                     ->counts('questions')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('faqs_count')
-                    ->label('Jml FAQ')
+                    ->label(__('FAQs Count'))
                     ->counts('faqs')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('sort_order')
-                    ->label('Urutan')
+                    ->label(__('Sort Order'))
                     ->sortable(),
 
                 Tables\Columns\ToggleColumn::make('is_active')
-                    ->label('Aktif'),
+                    ->label(__('Active')),
             ])
             ->defaultSort('sort_order', 'asc')
             ->actions([

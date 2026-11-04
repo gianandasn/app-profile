@@ -5,44 +5,48 @@ namespace App\Filament\Resources\QuestionResource\RelationManagers;
 use App\Models\Question;
 use App\Models\QuestionAnswer;
 use App\Notifications\QuestionAnsweredNotification;
+use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Actions;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Notification;
 
 class QuestionAnswersRelationManager extends RelationManager
 {
     protected static string $relationship = 'answers';
 
-    protected static ?string $title = 'Tanggapan / Jawaban';
-
     protected static ?string $recordTitleAttribute = 'body';
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __('Responses / Answers');
+    }
 
     public function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
                 Forms\Components\RichEditor::make('body')
-                    ->label('Isi Jawaban / Penjelasan')
+                    ->label(__('Answer / Explanation'))
                     ->required()
                     ->columnSpanFull(),
 
                 Forms\Components\Select::make('status')
-                    ->label('Status Jawaban')
+                    ->label(__('Answer Status'))
                     ->options([
-                        'draft' => 'Draft',
-                        'published' => 'Dipublikasikan (Dapat dilihat publik)',
-                        'rejected' => 'Ditolak',
+                        'draft' => __('Draft'),
+                        'published' => __('Published (Publicly Visible)'),
+                        'rejected' => __('Rejected'),
                     ])
                     ->default('published')
                     ->required(),
 
                 Forms\Components\Toggle::make('is_published')
-                    ->label('Tampilkan ke Publik')
+                    ->label(__('Publicly Visible'))
                     ->default(true),
             ]);
     }
@@ -52,17 +56,23 @@ class QuestionAnswersRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('Dijawab Oleh')
-                    ->placeholder('Petugas'),
+                    ->label(__('Answered By'))
+                    ->placeholder(__('Author')),
 
                 Tables\Columns\TextColumn::make('body')
-                    ->label('Jawaban')
+                    ->label(__('Answer'))
                     ->html()
                     ->limit(80),
 
                 Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
+                    ->label(__('Status'))
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'draft' => __('Draft'),
+                        'published' => __('Published'),
+                        'rejected' => __('Rejected'),
+                        default => $state,
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'published' => 'success',
                         'rejected' => 'danger',
@@ -70,11 +80,11 @@ class QuestionAnswersRelationManager extends RelationManager
                     }),
 
                 Tables\Columns\IconColumn::make('is_published')
-                    ->label('Publik')
+                    ->label(__('Public'))
                     ->boolean(),
 
                 Tables\Columns\TextColumn::make('answered_at')
-                    ->label('Waktu Menjawab')
+                    ->label(__('Answered At'))
                     ->dateTime()
                     ->sortable(),
             ])
@@ -103,7 +113,7 @@ class QuestionAnswersRelationManager extends RelationManager
                         }
 
                         FilamentNotification::make()
-                            ->title('Jawaban berhasil disimpan')
+                            ->title(__('Answer saved successfully'))
                             ->success()
                             ->send();
                     }),

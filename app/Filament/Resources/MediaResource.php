@@ -4,10 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\MediaResource\Pages;
 use App\Models\Media;
-use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Resources\Resource;
 use Filament\Actions;
+use Filament\Forms;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -17,28 +17,42 @@ class MediaResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-photo';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'CMS';
+    public static function getModelLabel(): string
+    {
+        return __('Media');
+    }
 
-    protected static ?string $modelLabel = 'Media';
+    public static function getPluralModelLabel(): string
+    {
+        return __('Media Library');
+    }
 
-    protected static ?string $pluralModelLabel = 'Media Library';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('CMS');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Media Library');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
                 Forms\Components\FileUpload::make('file_path')
-                    ->label('File')
+                    ->label(__('File'))
                     ->directory('media')
                     ->required()
                     ->columnSpanFull(),
 
                 Forms\Components\TextInput::make('file_name')
-                    ->label('Nama File')
+                    ->label(__('File Name'))
                     ->maxLength(255),
 
                 Forms\Components\TextInput::make('alt_text')
-                    ->label('Teks Alternatif (Alt Text)')
+                    ->label(__('Alt Text'))
                     ->maxLength(255),
             ]);
     }
@@ -48,20 +62,20 @@ class MediaResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('file_path')
-                    ->label('Preview')
+                    ->label(__('Preview'))
                     ->square(),
 
                 Tables\Columns\TextColumn::make('file_name')
-                    ->label('Nama File')
+                    ->label(__('File Name'))
                     ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('mime_type')
-                    ->label('Tipe')
+                    ->label(__('Mime Type'))
                     ->badge(),
 
                 Tables\Columns\TextColumn::make('file_size')
-                    ->label('Ukuran')
+                    ->label(__('File Size'))
                     ->formatStateUsing(function ($state) {
                         if (! $state) return '-';
                         if ($state >= 1048576) {
@@ -71,11 +85,11 @@ class MediaResource extends Resource
                     }),
 
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('Diupload Oleh')
+                    ->label(__('Uploaded By'))
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Tanggal')
+                    ->label(__('Date'))
                     ->dateTime()
                     ->sortable(),
             ])
