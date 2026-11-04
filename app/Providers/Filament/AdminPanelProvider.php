@@ -43,6 +43,10 @@ class AdminPanelProvider extends PanelProvider
             //     AccountWidget::class,
             //     FilamentInfoWidget::class,
             // ])
+            ->spa()
+                ->resourceCreatePageRedirect('index')
+                ->resourceEditPageRedirect('index')
+                ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
