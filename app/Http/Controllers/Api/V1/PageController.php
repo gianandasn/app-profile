@@ -15,7 +15,11 @@ class PageController extends Controller
     {
         $page = Page::query()
             ->published()
-            ->where('slug', $slug)
+            ->where(function ($q) use ($slug) {
+                $q->where('slug->' . app()->getLocale(), $slug)
+                    ->orWhere('slug->id', $slug)
+                    ->orWhere('slug->en', $slug);
+            })
             ->firstOrFail();
 
         return new PageResource($page);

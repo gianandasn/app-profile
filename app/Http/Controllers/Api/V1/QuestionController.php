@@ -32,8 +32,11 @@ class QuestionController extends Controller
                 $query->where('is_published', true);
             })
             ->when($request->filled('topic'), function ($query) use ($request) {
-                $query->whereHas('topic', function ($q) use ($request) {
-                    $q->where('slug', $request->input('topic'));
+                $topicSlug = $request->input('topic');
+                $query->whereHas('topic', function ($q) use ($topicSlug) {
+                    $q->where('slug->' . app()->getLocale(), $topicSlug)
+                        ->orWhere('slug->id', $topicSlug)
+                        ->orWhere('slug->en', $topicSlug);
                 });
             })
             ->latest()
@@ -54,8 +57,10 @@ class QuestionController extends Controller
             'phone' => ['nullable', 'string', 'max:50'],
             'subject' => ['required', 'string', 'max:255'],
             'body' => ['required', 'string'],
+            'locale' => ['nullable', 'string', 'max:5'],
         ]);
 
+        $validated['locale'] = $request->input('locale', app()->getLocale());
         $validated['status'] = 'pending';
         $validated['ip_address'] = $request->ip();
 

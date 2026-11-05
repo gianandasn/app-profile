@@ -22,8 +22,11 @@ class PostController extends Controller
             ->with(['category', 'user'])
             ->published()
             ->when($request->filled('category'), function ($query) use ($request) {
-                $query->whereHas('category', function ($q) use ($request) {
-                    $q->where('slug', $request->input('category'));
+                $cat = $request->input('category');
+                $query->whereHas('category', function ($q) use ($cat) {
+                    $q->where('slug->' . app()->getLocale(), $cat)
+                        ->orWhere('slug->id', $cat)
+                        ->orWhere('slug->en', $cat);
                 });
             })
             ->when($request->has('featured'), function ($query) use ($request) {
@@ -32,8 +35,11 @@ class PostController extends Controller
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = $request->input('search');
                 $query->where(function ($q) use ($search) {
-                    $q->where('title', 'like', "%{$search}%")
-                        ->orWhere('summary', 'like', "%{$search}%");
+                    $q->where('title->' . app()->getLocale(), 'like', "%{$search}%")
+                        ->orWhere('title->id', 'like', "%{$search}%")
+                        ->orWhere('title->en', 'like', "%{$search}%")
+                        ->orWhere('summary->' . app()->getLocale(), 'like', "%{$search}%")
+                        ->orWhere('summary->id', 'like', "%{$search}%");
                 });
             })
             ->latest('published_at')
@@ -50,7 +56,11 @@ class PostController extends Controller
         $post = Post::query()
             ->with(['category', 'user'])
             ->published()
-            ->where('slug', $slug)
+            ->where(function ($q) use ($slug) {
+                $q->where('slug->' . app()->getLocale(), $slug)
+                    ->orWhere('slug->id', $slug)
+                    ->orWhere('slug->en', $slug);
+            })
             ->firstOrFail();
 
         $post->increment('view_count');

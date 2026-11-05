@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\QuestionController;
 use App\Http\Controllers\Api\V1\QuestionTopicController;
 use App\Http\Controllers\Api\V1\SettingController;
 use App\Http\Controllers\Api\V1\SlideController;
+use App\Http\Middleware\SetApiLocale;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('v1')->group(function () {
+Route::prefix('v1')->middleware(SetApiLocale::class)->group(function () {
     // CMS Endpoints
     Route::get('posts', [PostController::class, 'index']);
     Route::get('posts/{slug}', [PostController::class, 'show']);
