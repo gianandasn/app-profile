@@ -11,9 +11,12 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
 
 class PostResource extends Resource
 {
+    use Translatable;
+
     protected static ?string $model = Post::class;
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
@@ -55,7 +58,10 @@ class PostResource extends Resource
                             ->label(__('Slug'))
                             ->required()
                             ->maxLength(255)
-                            ->unique(ignoreRecord: true),
+                            ->unique(
+                                modifyRuleUsing: fn ($rule, $livewire) => $rule->where('slug->' . ($livewire->activeLocale ?? 'id')),
+                                ignoreRecord: true
+                            ),
 
                         Forms\Components\Textarea::make('summary')
                             ->label(__('Summary'))

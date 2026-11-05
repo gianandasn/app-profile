@@ -12,9 +12,13 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use LaraZeus\SpatieTranslatable\Resources\RelationManagers\Concerns\Translatable;
+use LaraZeus\SpatieTranslatable\Tables\Actions\LocaleSwitcher;
 
 class MenuItemsRelationManager extends RelationManager
 {
+    use Translatable;
+
     protected static string $relationship = 'items';
 
     protected static ?string $recordTitleAttribute = 'label';
@@ -56,9 +60,9 @@ class MenuItemsRelationManager extends RelationManager
                     ->label(__('Select Content'))
                     ->options(function ($get) {
                         return match ($get('type')) {
-                            'page' => Page::query()->orderBy('title')->pluck('title', 'id'),
-                            'post' => Post::query()->published()->orderBy('title')->pluck('title', 'id'),
-                            'category' => Category::query()->active()->orderBy('name')->pluck('name', 'id'),
+                            'page' => Page::all()->pluck('title', 'id'),
+                            'post' => Post::published()->get()->pluck('title', 'id'),
+                            'category' => Category::active()->get()->pluck('name', 'id'),
                             default => [],
                         };
                     })
@@ -127,6 +131,7 @@ class MenuItemsRelationManager extends RelationManager
             ])
             ->defaultSort('sort_order', 'asc')
             ->headerActions([
+                LocaleSwitcher::make(),
                 Actions\CreateAction::make()
                     ->mutateFormDataUsing(function (array $data): array {
                         if ($data['type'] === 'page') {

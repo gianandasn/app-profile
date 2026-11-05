@@ -79,6 +79,11 @@ class QuestionResource extends Resource
                     ->label(__('IP Address'))
                     ->disabled(),
 
+                Forms\Components\TextInput::make('locale')
+                    ->label(__('Language'))
+                    ->disabled()
+                    ->default('id'),
+
                 Forms\Components\TextInput::make('subject')
                     ->label(__('Subject / Question Title'))
                     ->required()
@@ -110,6 +115,11 @@ class QuestionResource extends Resource
                 Tables\Columns\TextColumn::make('topic.name')
                     ->label(__('Topic'))
                     ->badge(),
+
+                Tables\Columns\TextColumn::make('locale')
+                    ->label(__('Language'))
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => strtoupper($state ?? 'ID')),
 
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('Status'))

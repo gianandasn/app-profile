@@ -5,10 +5,21 @@ namespace App\Filament\Resources\MediaResource\Pages;
 use App\Filament\Resources\MediaResource;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Storage;
+use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
+use LaraZeus\SpatieTranslatable\Resources\Pages\CreateRecord\Concerns\Translatable;
 
 class CreateMedia extends CreateRecord
 {
+    use Translatable;
+
     protected static string $resource = MediaResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            LocaleSwitcher::make(),
+        ];
+    }
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
@@ -33,4 +44,3 @@ class CreateMedia extends CreateRecord
         return $data;
     }
 }
-

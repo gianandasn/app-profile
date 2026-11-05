@@ -10,9 +10,12 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
 
 class SettingResource extends Resource
 {
+    use Translatable;
+
     protected static ?string $model = Setting::class;
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog-6-tooth';

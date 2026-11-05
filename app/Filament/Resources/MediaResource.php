@@ -10,9 +10,12 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
 
 class MediaResource extends Resource
 {
+    use Translatable;
+
     protected static ?string $model = Media::class;
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-photo';

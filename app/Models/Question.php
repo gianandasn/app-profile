@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['topic_id', 'name', 'email', 'phone', 'subject', 'body', 'status', 'ip_address'])]
+#[Fillable(['topic_id', 'name', 'email', 'phone', 'subject', 'body', 'status', 'locale', 'ip_address'])]
 class Question extends Model
 {
     use HasFactory;

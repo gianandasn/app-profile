@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('menu_id')->constrained()->cascadeOnDelete();
             $table->foreignId('parent_id')->nullable()->constrained('menu_items')->nullOnDelete();
-            $table->string('label');
-            $table->string('url')->nullable();
+            $table->json('label');
+            $table->json('url')->nullable();
             $table->string('type')->default('custom');
             $table->bigInteger('linkable_id')->nullable();
             $table->string('linkable_type')->nullable();

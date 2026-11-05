@@ -11,9 +11,12 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
 
 class MenuResource extends Resource
 {
+    use Translatable;
+
     protected static ?string $model = Menu::class;
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-bars-3';

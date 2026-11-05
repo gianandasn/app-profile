@@ -8,11 +8,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
+use Spatie\Translatable\HasTranslations;
 
 #[Fillable(['user_id', 'category_id', 'title', 'slug', 'summary', 'content', 'image', 'status', 'published_at', 'view_count', 'is_featured'])]
 class Post extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
+
+    public array $translatable = [
+        'title',
+        'slug',
+        'summary',
+        'content',
+    ];
 
     protected function casts(): array
     {
@@ -27,7 +35,8 @@ class Post extends Model
     {
         static::creating(function (Post $post) {
             if (empty($post->slug)) {
-                $post->slug = Str::slug($post->title);
+                $title = $post->getTranslation('title', app()->getLocale(), false) ?: (is_string($post->title) ? $post->title : '');
+                $post->setTranslation('slug', app()->getLocale(), Str::slug($title));
             }
         });
     }

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('subject');
             $table->longText('body');
             $table->enum('status', ['pending', 'answered', 'rejected'])->default('pending');
+            $table->string('locale', 5)->default('id');
             $table->string('ip_address')->nullable();
             $table->timestamps();
         });

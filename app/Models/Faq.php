@@ -7,11 +7,17 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Translatable\HasTranslations;
 
 #[Fillable(['topic_id', 'question', 'answer', 'sort_order', 'is_active'])]
 class Faq extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
+
+    public array $translatable = [
+        'question',
+        'answer',
+    ];
 
     protected function casts(): array
     {

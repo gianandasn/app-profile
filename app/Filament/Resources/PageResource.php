@@ -11,9 +11,12 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
 
 class PageResource extends Resource
 {
+    use Translatable;
+
     protected static ?string $model = Page::class;
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document';
@@ -53,7 +56,10 @@ class PageResource extends Resource
                     ->label(__('Slug'))
                     ->required()
                     ->maxLength(255)
-                    ->unique(ignoreRecord: true),
+                    ->unique(
+                        modifyRuleUsing: fn ($rule, $livewire) => $rule->where('slug->' . ($livewire->activeLocale ?? 'id')),
+                        ignoreRecord: true
+                    ),
 
                 Forms\Components\RichEditor::make('content')
                     ->label(__('Content'))
