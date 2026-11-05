@@ -17,35 +17,36 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final localeProvider = context.watch<LocaleProvider>();
     final currentLang = localeProvider.languageCode;
-    final isDesktop = MediaQuery.of(context).size.width > 900;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth > 900;
 
     return AppBar(
-      titleSpacing: 20,
+      titleSpacing: isDesktop ? 20 : 8,
       title: InkWell(
         onTap: () => context.go('/'),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(7),
               decoration: BoxDecoration(
                 color: AppTheme.primaryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.account_balance, color: AppTheme.primaryColor, size: 28),
+              child: const Icon(Icons.account_balance, color: AppTheme.primaryColor, size: 24),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
             Flexible(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    title ?? context.tr('app_title'),
+                    title ?? (screenWidth < 420 ? 'Portal Pelayanan' : context.tr('app_title')),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 15,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: AppTheme.textDark,
                     ),
@@ -53,7 +54,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                   Text(
                     context.tr('nav_home'),
                     style: const TextStyle(
-                      fontSize: 12,
+                      fontSize: 11,
                       color: AppTheme.textMuted,
                     ),
                   ),

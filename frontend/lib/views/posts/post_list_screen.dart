@@ -256,7 +256,12 @@ class _PostListScreenState extends State<PostListScreen> {
                 itemBuilder: (context, index) {
                   final post = _posts[index];
                   return Card(
+                    elevation: 0,
                     clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(color: Colors.grey.shade200),
+                    ),
                     child: InkWell(
                       onTap: () => context.go('/posts/${post.slug}'),
                       child: Column(
