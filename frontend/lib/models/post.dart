@@ -1,3 +1,4 @@
+import '../core/api/api_endpoints.dart';
 import 'category.dart';
 
 class PostModel {
@@ -38,7 +39,7 @@ class PostModel {
       slug: json['slug'] as String? ?? '',
       summary: json['summary'] as String?,
       content: json['content'] as String? ?? '',
-      image: json['image'] as String?,
+      image: ApiEndpoints.resolveImageUrl(json['image'] as String?),
       status: json['status'] as String? ?? 'published',
       publishedAt: json['published_at'] as String?,
       viewCount: json['view_count'] as int? ?? 0,
